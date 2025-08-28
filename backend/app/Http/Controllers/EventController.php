@@ -14,4 +14,18 @@ class EventController extends Controller
             'events' => $events,
         ]);
     }
+
+    public function getPublishedEvents() {
+        $events = Event::getPublishedEvents();
+        return response()->json([
+            'events' => $events,
+        ]);
+    }
+
+    public function getEventDetails($id) {
+        $event = Event::getEvent($id);
+        return response()->json([
+            'event' => $event,
+        ]);
+    }
 }

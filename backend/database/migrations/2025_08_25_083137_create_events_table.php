@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('status');
             $table->string('location');
             $table->integer('capacity');
+            $table->integer('price');
+            $table->integer('limit_per_person');
             $table->timestamp('start_at');
             $table->timestamps();
         });

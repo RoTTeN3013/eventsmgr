@@ -60,4 +60,15 @@ class AuthController extends Controller
             ]);
         }
     }
+
+    public function logUserOut() {
+        
+        if(Auth::check()) {
+            Auth::logout();
+            return response()->json([
+                'success' => true
+            ]);
+        }
+        
+    }
 }

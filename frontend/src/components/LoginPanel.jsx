@@ -1,32 +1,21 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Notification from './Notification.jsx'
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext.jsx';
+import { useNotification } from '../context/NotificationContext';
 
 const LoginPanel = () => {
 
   //State változók
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //Notification state
-  const [notifStatus, setNotifStatus] = useState('');
-  const [notifMsg, setNotifMSG] = useState('');
   const { user, setUser } = useUser();
 
   //Navigáció
   const navigate = useNavigate();
 
   //Üzenetek megjelenítése
-  const showNotification = (message) => {
-    setNotifStatus('show');
-    setNotifMSG(message);
-
-    setTimeout(() => {
-      setNotifStatus('');
-      setNotifMSG('');
-    }, 5000);
-  }
+  const { showNotification } = useNotification();
 
   //Bejelentkezés
   const handleLoginAttempt = async () => {
@@ -69,13 +58,12 @@ const LoginPanel = () => {
           />
         </div>
         <div className="form-group w-100 d-flex flex-column align-items-center gap-2 mb-4">
-          <input type="text" className="form-control" placeholder="Jelszó" value={password || ''}
+          <input type="password" className="form-control" placeholder="Jelszó" value={password || ''}
             onChange={(e) => {setPassword(e.target.value)}}
           />
         </div>
           <button className="btn btn-dark" onClick={handleLoginAttempt}>Bejelentkezés</button>
       </div>
-      <Notification status={notifStatus} message={notifMsg} />
     </>
   )
 }

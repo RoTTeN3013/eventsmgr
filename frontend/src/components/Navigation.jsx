@@ -1,6 +1,7 @@
 import React from 'react'
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useUser } from '../context/UserContext';
+import axios from 'axios';
 
 const Nanvigation = () => {
 
@@ -14,6 +15,12 @@ const Nanvigation = () => {
       'route' : '/events',
       'icon' : 'fa-calendar-days',
       'name' : 'Események listája',
+      'permission' : ''
+    },
+    {
+      'route' : '/own-tickets',
+      'icon' : 'fa-ticket',
+      'name' : 'Jegyeim',
       'permission' : ''
     },
     {
@@ -36,6 +43,26 @@ const Nanvigation = () => {
     }
   ];
 
+  const { setUser } = useUser();
+
+  //Bejelentkezés
+  const handleLogOut = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/log-user-out',
+        {},
+        { withCredentials: true, withXSRFToken: true }
+      );
+
+      if(response.data.success === true) {
+        setUser(null);
+        <Navigate to="/" replace />
+      } 
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="navbar px-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
         <div className="d-flex">
@@ -48,7 +75,7 @@ const Nanvigation = () => {
         {user && (
           <div className="d-flex align-items-center">
             Helló {user.name}!
-            <Link to="/log-user-out" className="nav-link"><i className="fa fa-sign-in mx-3"></i></Link>
+            <button className="nav-link"  onClick={handleLogOut}><i className="fa fa-sign-in mx-3"></i></button>
           </div>
         )}
     </div>

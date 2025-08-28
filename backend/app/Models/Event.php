@@ -14,7 +14,9 @@ class Event extends Model
         'status',
         'organizer_id',
         'location',
-        'capacity'
+        'capacity',
+        'price',
+        'limit_per_person'
     ];
 
     //Organizer -> Esemény összekötése
@@ -24,19 +26,31 @@ class Event extends Model
     }
 
     //Összes esemény lekérdezése
-    static function getEvents()
+    public static function getEvents()
     {
         return self::orderBy('created_at', 'DESC')->get();
     }
 
+    //Publikus események
+    public static function getPublishedEvents()
+    {
+        return self::where('status', 'published')->orderBy('created_at', 'DESC')->get();
+    }
+
+    //Esemény adatai
+    public static function getEvent($id)
+    {
+        return self::find($id);
+    }
+
     //Összes esemény lekérdezése kezdő dátumok szerint
-    static function getEventsByStartDate()
+    public static function getEventsByStartDate()
     {
         return self::orderBy('start_at', 'ASC')->get();
     }
 
     //Felhasználóhoz tartozó események lekérdezése
-    static function getUserEvents($user)
+    public static function getUserEvents($user)
     {
         return self::where('organizer_id', $user)->get();
     }

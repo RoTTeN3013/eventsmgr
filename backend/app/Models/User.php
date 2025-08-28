@@ -45,4 +45,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public static function getAllUsers() {
+        return self::orderBy('id', 'ASC')->get();
+    }
+
+    public static function setBlockedStatus($id) {
+        $user = self::find($id);
+        if(!$user) return;
+
+        $user->is_blocked = !$user->is_blocked;
+        $user->save();
+
+        return $user->is_blocked;
+    }
 }
