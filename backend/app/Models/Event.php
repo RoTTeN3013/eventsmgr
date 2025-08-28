@@ -22,4 +22,22 @@ class Event extends Model
     {
         return $this->belongsTo(User::class, 'organizer_id');
     }
+
+    //Összes esemény lekérdezése
+    static function getEvents()
+    {
+        return self::orderBy('created_at', 'DESC')->get();
+    }
+
+    //Összes esemény lekérdezése kezdő dátumok szerint
+    static function getEventsByStartDate()
+    {
+        return self::orderBy('start_at', 'ASC')->get();
+    }
+
+    //Felhasználóhoz tartozó események lekérdezése
+    static function getUserEvents($user)
+    {
+        return self::where('organizer_id', $user)->get();
+    }
 }

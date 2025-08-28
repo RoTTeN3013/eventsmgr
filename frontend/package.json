@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "@inertiajs/core": "^2.1.2",
     "@inertiajs/react": "^2.1.2",
+    "animate.css": "^4.1.1",
     "bootstrap": "^5.3.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

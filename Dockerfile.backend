@@ -1,22 +1,13 @@
-# PHP 8.2 CLI image
-FROM php:8.2-cli
+FROM php:8.2-fpm
 
-# Install dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    unzip git curl libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql
-
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+        libpq-dev \
+        unzip \
+        git \
+        curl \
+    && docker-php-ext-install pdo pdo_pgsql \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www
-
-COPY backend /var/www
-
-# Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist
-
-# Expose port
-EXPOSE 8000
-
-CMD php artisan serve --host=0.0.0.0 --port=8000
+COPY . .
