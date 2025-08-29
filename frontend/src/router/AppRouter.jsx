@@ -3,6 +3,8 @@ import Events from '../pages/Events.jsx'
 import Login from '../pages/Login.jsx'
 import Event from '../pages/Event.jsx'
 import Users from '../pages/Users.jsx'
+import EventForm from '../pages/EventForm.jsx'
+import EventList from '../pages/EventList.jsx'
 import ProtectedRoute from '../router/ProtectedRoute.jsx';
 
 function AppRouter() {
@@ -22,8 +24,26 @@ function AppRouter() {
                 }
             />
             <Route path="/users" element={
-                <ProtectedRoute>
+                <ProtectedRoute role={['admin']}>
                     <Users />
+                </ProtectedRoute>
+                }
+            />
+            <Route path="/manage-events" element={
+                <ProtectedRoute role={['admin']}>
+                    <EventList listType='admin' />
+                </ProtectedRoute>
+                }
+            />
+            <Route path="/own-events" element={
+                <ProtectedRoute role={['admin', 'organizer']}>
+                    <EventList listType='organizer' />
+                </ProtectedRoute>
+                }
+            />
+            <Route path="/create-event" element={
+                <ProtectedRoute role={['admin', 'organizer']}>
+                    <EventForm values={[]} />
                 </ProtectedRoute>
                 }
             />

@@ -1,23 +1,41 @@
 
 import TableList from '../components/TableList';
 import Loader from '../components/Loader';
+import Filter from '../components/Filter';
 import BaseLayout from '../layouts/BaseLayout';
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 import { useNotification } from '../context/NotificationContext';
 
-export default function Events() {
+export default function Users() {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [update, setUpdate] = useState(false);
     const { showNotification } = useNotification();
+    const [filters, setFilters] = useState([]);
 
     const roleTitles = {
         user: 'Felhasználó',
         organizer: 'Szervező',
         admin: 'Adminisztrátor'
     }
+
+    const handleUpdateFilters = (filterName, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterName]: value
+        }));
+    }
+
+    const filterInputs = [
+        {label: 'Felhasználónév', type: 'text', handler: (e) => handleUpdateFilters('username', e.target.value)},
+        {label: 'Státusz', type: 'select', handler: (e) => handleUpdateFilters('status', e.target.value), options:[
+            {value: 'all', label: 'Összes felhasználó'},
+            {value: true, label: 'Tiltiott'},
+            {value: false, label: 'Nem tiltott'},
+        ]},
+    ]
 
     const handleBlockUser = (userID) => {
         setLoading(true);
@@ -34,7 +52,7 @@ export default function Events() {
     }
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/get-all-users', { withCredentials: true })
+        axios.get('http://localhost:8000/api/get-all-users', { withCredentials: true,  params: filters })
             .then(res => {
                 //Így a dinamikusan megadott értékekkel újrhasznosítható teljesen a komponens
                 const collection = {
@@ -71,11 +89,16 @@ export default function Events() {
                 setUpdate(false);
             }
         );
-    }, [update]);
+    }, [update, filters]);
 
     return (
         <BaseLayout>
-            {loading ? <Loader /> : <TableList collection={users} />}
+            {loading ? <Loader /> : 
+                <>
+                    <Filter filters={filterInputs}/> 
+                    <TableList collection={users} />
+                </>
+            }
         </BaseLayout>
     );
 }

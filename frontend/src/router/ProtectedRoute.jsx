@@ -7,7 +7,13 @@ const ProtectedRoute = ({ children, roles = [] }) => {
 
   if (!checked) return <Loader />;
 
+  //Nincs bejelentkezve -> Login panel
   if (!user) return <Navigate to="/" replace />;
+
+  //Role szerinti routem a felhasználó csoportjának ellenőrzése
+  if(roles.lenght > 0 && !roles.includes(user.role)) {
+    return <Navigate to={location?.state?.from || '/'} replace />;
+  }
 
   return children;
 };

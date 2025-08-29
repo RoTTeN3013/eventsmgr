@@ -26,9 +26,9 @@ class Event extends Model
     }
 
     //Összes esemény lekérdezése
-    public static function getEvents()
+    public static function getAllEvents()
     {
-        return self::orderBy('created_at', 'DESC')->get();
+        return self::with('organizer:id,name')->orderBy('created_at', 'DESC')->get();
     }
 
     //Publikus események

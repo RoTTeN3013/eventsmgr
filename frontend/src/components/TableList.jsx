@@ -26,9 +26,16 @@ const TableList = ({collection}) => {
                     </td>
                 ))}
                 <td>
-                    {Object.values(tr.actions).map((action, index) => (
-                        <button key={index} onClick={action.handler} className="btn-dark btn">{action.title} <i className={`fa-solid ${action.icon}`}></i></button>
-                    ))}
+                    {tr.actions && tr.actions.length > 0 && ( //Amennyiben lett létrehozva
+                        Object.values(tr.actions).map((action, index) => (
+                            <button key={index} onClick={action.handler} className="btn-dark btn">{action.title ? action.title : ''} <i className={`fa-solid ${action.icon}`}></i></button>
+                        ))
+                    )}
+                    {tr.buttons && tr.buttons.length > 0 && ( //Amennyiben lett létrehozva
+                        Object.values(tr.buttons).map((button, index) => (
+                            <Link to={button.route} key={index} className="btn-dark btn"><i className={`fa-solid ${button.icon}`}></i>{button.title ? button.title : ''}</Link>
+                        ))
+                    )}
                 </td>
               </tr>
             ))}

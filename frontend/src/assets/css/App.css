@@ -180,5 +180,48 @@ body, html, #root {
     top: 0;
 }
 
+/* Filter */
+
+.filter-container {
+    margin-top: 80px;
+    width: 100%;
+}
+
+/* Form */
+
+.form {
+   margin-top: 80px 
+}
+
+.form-container {
+    width: 750px;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.form-header {
+    height: 50px;
+    width: 750px;
+    padding: 30px;
+    border-radius: 15px;
+    background-color: black;
+    color: white;
+}
+
+.form-container * .form-group {
+    width: 80%;
+}
+
+.form-container * .form-control {
+    border: 1px solid blackwhite;
+    background: none;
+    width: 100%;
+}
+
+.form-container * .form-control:focus {
+    box-shadow: none;
+}
+
 
 

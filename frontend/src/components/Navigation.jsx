@@ -15,31 +15,37 @@ const Nanvigation = () => {
       'route' : '/events',
       'icon' : 'fa-calendar-days',
       'name' : 'Események listája',
-      'permission' : ''
+      'permission' : []
     },
     {
       'route' : '/own-tickets',
       'icon' : 'fa-ticket',
       'name' : 'Jegyeim',
-      'permission' : ''
+      'permission' : []
     },
     {
       'route' : '/own-events',
       'icon' : 'fa-calendar-plus',
       'name' : 'Saját események',
-      'permission' : 'organizer'
+      'permission' : ['organizer', 'admin']
     },
     {
       'route' : '/users',
       'icon' : 'fa-users',
       'name' : 'Felhasználók',
-      'permission' : 'admin'
+      'permission' : ['admin']
     },
     {
       'route' : '/manage-events',
       'icon' : 'fa-calendar-check',
       'name' : 'Események kezelése',
-      'permission' : 'admin'
+      'permission' : ['admin']
+    },
+    {
+      'route' : '/create-event',
+      'icon' : 'fa-calendar-check',
+      'name' : 'új',
+      'permission' : ['admin']
     }
   ];
 
@@ -67,7 +73,7 @@ const Nanvigation = () => {
     <div className="navbar px-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
         <div className="d-flex">
           {menus.map((menu, index) => (
-            (menu.permission === '' || menu.permission === user.role) && (
+            (menu.permission.length === 0 || menu.permission.includes(user.role)) && (
               <Link to={menu.route} key={index} className="nav-link"><i className={`fa-solid ${menu.icon} mx-3`}></i> {menu.name}</Link>
             )
           ))}

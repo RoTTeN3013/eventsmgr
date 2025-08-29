@@ -22,3 +22,4 @@ Route::post('/api/set-user-blocked-status', [UserController::class, 'setUserBloc
 //Event
 Route::get('/api/get-event-list', [EventController::class, 'getPublishedEvents']);
 Route::get('/api/get-event-details/{id}', [EventController::class, 'getEventDetails']);
+Route::get('/api/get-all-events', [EventController::class, 'getAllEvents']);
