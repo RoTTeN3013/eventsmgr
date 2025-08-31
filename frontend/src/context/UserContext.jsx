@@ -10,21 +10,40 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [checked, setChecked] = useState(false);
 
+    const loadUser = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/get-user-data', {
+                withCredentials: true,
+                withXSRFToken: true
+            })
+            setUser(response.data.user || null)
+        }catch {
+            setUser(null);
+        }finally {
+            setChecked(true);
+        }
+    }
+
+    //Session ellenőrzés
+    const refreshUser = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/get-user-data', {
+                withCredentials: true,
+                withXSRFToken: true
+            })
+            setUser(response.data.user || null)
+        }catch {
+            setUser(null);
+        }
+    }
+
     //Login status ellenőrzése
     useEffect(() => {
-        axios.get('http://localhost:8000/api/get-user-data', {
-            withCredentials: true,
-            withXSRFToken: true
-        })
-        .then(res => {
-            if (res.data) setUser(res.data.user); 
-        })
-        .catch(() => setUser(null))
-        .finally(() => setChecked(true));
+        loadUser();
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser, checked, setChecked }}>
+        <UserContext.Provider value={{ user, setUser, checked, setChecked, refreshUser }}>
             {children}
         </UserContext.Provider>
     );

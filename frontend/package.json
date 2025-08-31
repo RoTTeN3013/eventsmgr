@@ -14,8 +14,10 @@
     "@inertiajs/core": "^2.1.2",
     "@inertiajs/react": "^2.1.2",
     "animate.css": "^4.1.1",
-    "bootstrap": "^5.3.7",
+    "bootstrap": "^5.3.8",
+    "lodash.debounce": "^4.0.8",
     "react": "^19.1.1",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",
     "wowjs": "^1.1.3"

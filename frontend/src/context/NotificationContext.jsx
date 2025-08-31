@@ -23,9 +23,33 @@ export const NotificationProvider = ({ children }) => {
     return (
         <NotificationContext.Provider value={{ showNotification }}>
             {children}
-            <div className={`${status} d-flex justify-content-center align-items-center notification_container `}>
-                <p className="text-white fs-6 p-0 m-0"> <i className="fa fa-circle-info"></i> {message}</p>
-            </div>     
+            {message && (
+            <div className={`${status} d-flex align-items-end notification-box flex-column gap-2`}>
+                {Array.isArray(message) ? (
+                    message.map((msg, index) => (
+                    <div key={index} className="d-flex justify-content-center align-items-center notification_container">
+                        <p className="text-white fs-6 p-0 m-0">
+                            <i className="fa fa-circle-info"></i> {msg}
+                        </p>
+                    </div>
+                    ))
+                ) : typeof message === "object" ? (
+                    Object.values(message).map((msg, index) => (
+                        <div key={index} className="d-flex justify-content-center align-items-center notification_container">
+                            <p className="text-white fs-6 p-0 m-0">
+                                <i className="fa fa-circle-info"></i> {msg}
+                            </p>
+                        </div>
+                    ))
+                ) : (
+                    <div className="d-flex justify-content-center align-items-center notification_container">
+                        <p className="text-white fs-6 p-0 m-0">
+                            <i className="fa fa-circle-info"></i> {message}
+                        </p>
+                    </div>
+                )}
+            </div>
+        )}
         </NotificationContext.Provider>
     );
 };

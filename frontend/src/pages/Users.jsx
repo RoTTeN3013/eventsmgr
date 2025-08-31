@@ -6,8 +6,20 @@ import BaseLayout from '../layouts/BaseLayout';
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 import { useNotification } from '../context/NotificationContext';
+import {useSearchParams} from 'react-router-dom' 
 
 export default function Users() {
+
+    //Pagination oldal id kinyerése az url-ből
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get('page') || 1;
+
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        prev_page_url: null,
+        next_page_url: null,
+        last_page: 1,
+    })
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -31,7 +43,6 @@ export default function Users() {
     const filterInputs = [
         {label: 'Felhasználónév', type: 'text', handler: (e) => handleUpdateFilters('username', e.target.value)},
         {label: 'Státusz', type: 'select', handler: (e) => handleUpdateFilters('status', e.target.value), options:[
-            {value: 'all', label: 'Összes felhasználó'},
             {value: true, label: 'Tiltiott'},
             {value: false, label: 'Nem tiltott'},
         ]},
@@ -52,7 +63,7 @@ export default function Users() {
     }
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/get-all-users', { withCredentials: true,  params: filters })
+        axios.get(`http://localhost:8000/api/get-all-users?page=${page}`, { withCredentials: true,  params: filters })
             .then(res => {
                 //Így a dinamikusan megadott értékekkel újrhasznosítható teljesen a komponens
                 const collection = {
@@ -66,7 +77,7 @@ export default function Users() {
                     ],
                     table_rows: [] 
                 };
-                res.data.users.forEach(user => {
+                res.data.users.data.forEach(user => {
                     collection.table_rows.push({
                         id: user.id,
                         tds: [
@@ -82,6 +93,12 @@ export default function Users() {
                     });
                 });
                 setUsers(collection);
+                setPagination({
+                    current_page: res.data.users.current_page,
+                    prev_page_url: res.data.users.prev_page_url,
+                    next_page_url: res.data.users.next_page_url,
+                    last_page: res.data.users.last_page,
+                })
             })
             .catch(() => setUsers([]))
             .finally(() =>  {
@@ -89,14 +106,14 @@ export default function Users() {
                 setUpdate(false);
             }
         );
-    }, [update, filters]);
+    }, [update, filters, page]);
 
     return (
         <BaseLayout>
             {loading ? <Loader /> : 
                 <>
                     <Filter filters={filterInputs}/> 
-                    <TableList collection={users} />
+                    <TableList collection={users} pagination={pagination}/>
                 </>
             }
         </BaseLayout>

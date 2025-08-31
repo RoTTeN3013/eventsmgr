@@ -66,6 +66,17 @@ body, html, #root {
     font-weight: bold;
 }
 
+.notification-box {
+    position: fixed;
+    top: 50%;
+    right: 15px;
+    transform-origin: right;
+    transition-duration: 300ms;
+    transform: scaleX(0);
+    opacity: 0;
+    z-index: 500;
+}
+
 .notification_container    {
     height: 40px;
     background-color: black;
@@ -73,18 +84,10 @@ body, html, #root {
     padding: 5px 15px;
     width: fit-content;
     min-width: 200px;
-    transform-origin: right;
-    transition-duration: 300ms;
-    position: fixed;
-    top: 50%;
-    right: 15px;
-    transform: scaleX(0);
-    opacity: 0;
-    z-index: 500;
     font-weight: bold;
 }
 
-.notification_container.show {
+.notification-box.show {
     transform: scaleX(1);
     opacity: 1;
 }
@@ -103,6 +106,10 @@ body, html, #root {
     height: fit-content;
     border-radius: 10px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    overflow-wrap: break-word; 
+    word-wrap: break-word; 
+    word-break: break-word;
+    white-space: normal;
 }
 
 .list-card-header {
@@ -120,10 +127,9 @@ body, html, #root {
 .card-details-card {
     min-height: 50px;
     height: fit-content;
-    width: 80%;
+    width: 50%;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
-
 
 .card-details-card.header {
     background-color: rgb(0, 0, 0);
@@ -221,6 +227,29 @@ body, html, #root {
 
 .form-container * .form-control:focus {
     box-shadow: none;
+}
+
+/* Cart */
+
+.cart-item-container {
+    margin-top: 80px;
+}
+
+.cart-item-box {
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    height: 60px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.cart_total_container {
+    flex-shrink: 0;
+    border-radius: 10px;
+    height: 60px;
+    font-weight: bold;
+    background-color: black;
 }
 
 

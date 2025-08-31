@@ -20,7 +20,7 @@ class UserController extends Controller
                 $builder->where('is_blocked', $request->status);
             }
             
-            $users = $builder->get();
+            $users = $builder->paginate(15);
             
             return response()->json([
                 'success' => true,

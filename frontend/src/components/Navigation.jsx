@@ -25,7 +25,7 @@ const Nanvigation = () => {
     },
     {
       'route' : '/own-events',
-      'icon' : 'fa-calendar-plus',
+      'icon' : 'fa-calendar',
       'name' : 'Saját események',
       'permission' : ['organizer', 'admin']
     },
@@ -43,9 +43,15 @@ const Nanvigation = () => {
     },
     {
       'route' : '/create-event',
-      'icon' : 'fa-calendar-check',
-      'name' : 'új',
-      'permission' : ['admin']
+      'icon' : 'fa-calendar-plus',
+      'name' : 'Új esemény létrehozása',
+      'permission' : ['admin', 'organizer']
+    },
+    {
+      'route' : '/cart',
+      'icon' : 'fa-shopping-cart',
+      'name' : 'Kosár',
+      'permission' : ['admin', 'organizer']
     }
   ];
 

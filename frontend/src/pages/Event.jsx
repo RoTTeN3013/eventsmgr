@@ -19,7 +19,7 @@ export default function Event() {
         const list = {
             title: {
                 icon: 'fa-calendar-days',
-                value: res.data.event.title
+                value: res.data.event.status === 'cancelled' ? res.data.event.title + ' - Törölt esemény' : res.data.event.title
             },
             details: [
                 { icon: 'fa-file-lines', value: res.data.event.description },

@@ -23,7 +23,7 @@ const Form = ({inputs, header}) => {
                     }else if(input.type === 'submit') {
                         return (
                             <div key={index} className="form-group d-flex justify-content-center">
-                                <input type="submit" className="btn btn-dark" value={input.label} />
+                                <input type="submit" onClick={input.handler} className="btn btn-dark" value={input.label} />
                             </div>
                         )
                     }else if(input.type === 'texarea') {

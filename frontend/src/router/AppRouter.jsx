@@ -3,6 +3,8 @@ import Events from '../pages/Events.jsx'
 import Login from '../pages/Login.jsx'
 import Event from '../pages/Event.jsx'
 import Users from '../pages/Users.jsx'
+import Cart from '../pages/Cart.jsx'
+import OwnTickets from '../pages/OwnTickets.jsx'
 import EventForm from '../pages/EventForm.jsx'
 import EventList from '../pages/EventList.jsx'
 import ProtectedRoute from '../router/ProtectedRoute.jsx';
@@ -41,9 +43,27 @@ function AppRouter() {
                 </ProtectedRoute>
                 }
             />
+            <Route path="/own-tickets" element={
+                <ProtectedRoute role={['admin', 'organizer']}>
+                    <OwnTickets />
+                </ProtectedRoute>
+                }
+            />
             <Route path="/create-event" element={
                 <ProtectedRoute role={['admin', 'organizer']}>
-                    <EventForm values={[]} />
+                    <EventForm />
+                </ProtectedRoute>
+                }
+            />
+            <Route path="/edit-event/:id" element={
+                <ProtectedRoute role={['admin', 'organizer']}>
+                    <EventForm />
+                </ProtectedRoute>
+                }
+            />
+            <Route path="/cart" element={
+                <ProtectedRoute >
+                    <Cart />
                 </ProtectedRoute>
                 }
             />

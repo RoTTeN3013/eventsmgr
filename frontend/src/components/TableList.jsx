@@ -3,10 +3,22 @@ import axios from 'axios';
 import Notification from './Notification.jsx'
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
-const TableList = ({collection}) => {
+const TableList = ({collection, pagination}) => {
+
+  const navigate = useNavigate();
+
+  const extractPageFromUrl = (url) => {
+    try {
+      return new URL(url).searchParams.get('page');
+    } catch {
+      return null;
+    }
+  };
+
   return (
-    <div className="container-fluid table-container">
+    <div className="container-fluid table-container d-flex flex-column align-items-center gap-3">
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
@@ -41,6 +53,38 @@ const TableList = ({collection}) => {
             ))}
         </tbody>
       </table>
+      <div className="d-flex align-items-center gap-3">
+            
+            {pagination?.prev_page_url && (
+              <button
+                className="btn btn-dark"
+                onClick={() => {
+                    const page = extractPageFromUrl(pagination.prev_page_url);
+                    if (page) navigate(`/events?page=${page}`);
+                  }}
+                >
+                <i className="fa fa-arrow-left"></i>
+              </button>
+            )}
+
+            {pagination && (
+              <span>
+                Oldal {pagination.current_page} / {pagination.last_page}
+              </span>
+            )}
+
+            {pagination?.next_page_url && (
+              <button
+                className="btn btn-dark"
+                  onClick={() => {
+                    const page = extractPageFromUrl(pagination.next_page_url);
+                    if (page) navigate(`/events?page=${page}`);
+                  }}
+                >
+                <i className="fa fa-arrow-right"></i>
+              </button>
+            )}
+      </div>
     </div>
   )
 }

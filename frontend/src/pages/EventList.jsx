@@ -6,8 +6,20 @@ import BaseLayout from '../layouts/BaseLayout';
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 import { useNotification } from '../context/NotificationContext';
+import {useSearchParams} from 'react-router-dom' 
 
 export default function EventList({listType}) {
+
+    //Pagination oldal id kinyerése az url-ből
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get('page') || 1;
+
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        prev_page_url: null,
+        next_page_url: null,
+        last_page: 1,
+    })
 
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,9 +28,26 @@ export default function EventList({listType}) {
 
     const statusTitles = {
         draft: 'Vázlat',
-        published: 'Publikált',
+        published: 'Publikus',
         cancelled: 'Törölt esemény'
     }
+
+    const filterInputs = [
+        {label: 'Esemény neve', type: 'text', handler: (e) => handleUpdateFilters('title', e.target.value)},
+        
+        //Csakis adminisztrátorok szűrhessenek szervezőkre
+        ...(listType === 'admin' ?
+                [{ label: 'Szervező', type: 'text', handler: (e) => handleUpdateFilters('organizer', e.target.value) }]
+        : []),
+        
+        {label: 'Státusz', type: 'select', handler: (e) => handleUpdateFilters('status', e.target.value), options:[
+            {value: 'draft', label: 'Vázlat'},
+            {value: 'published', label: 'Publikus'},
+            {value: 'cancelled', label: 'Törölt esemény'},
+        ]},
+        {label: 'Dátum (kezdés)', type: 'date', handler: (e) => handleUpdateFilters('start_date', e.target.value)},
+        {label: 'Dátum (létrehozás', type: 'date', handler: (e) => handleUpdateFilters('date_of_create', e.target.value)},
+    ]
 
     const handleUpdateFilters = (filterName, value) => {
         setFilters(prev => ({
@@ -28,7 +57,7 @@ export default function EventList({listType}) {
     }
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/get-all-events', { withCredentials: true, params: filters })
+        axios.get(`http://localhost:8000/api/get-all-events?page=${page}`, { withCredentials: true, params: filters })
             .then(res => {
                 if(res.data.success) {
                     const collection = {
@@ -45,7 +74,7 @@ export default function EventList({listType}) {
                     ],
                     table_rows: [] 
                     };
-                    res.data.events.forEach(event => {
+                    res.data.events.data.forEach(event => {
                         collection.table_rows.push({
                             id: event.id,
                             tds: [
@@ -64,6 +93,12 @@ export default function EventList({listType}) {
                         });
                     });
                     setEvents(collection);
+                    setPagination({
+                        current_page: res.data.events.current_page,
+                        prev_page_url: res.data.events.prev_page_url,
+                        next_page_url: res.data.events.next_page_url,
+                        last_page: res.data.events.last_page,
+                    })
                 }else {
                     showNotification(res.data.message);
                 }
@@ -73,14 +108,14 @@ export default function EventList({listType}) {
                 setLoading(false); 
             }
         );
-    }, [filters]);
+    }, [filters, page]);
 
     return (
         <BaseLayout>
             {loading ? <Loader /> : 
                 <>
                     <Filter filters={filterInputs}/> 
-                    <TableList collection={events} />
+                    <TableList collection={events} pagination={pagination}/>
                 </>
             }
         </BaseLayout>
