@@ -47,7 +47,16 @@ class Event extends Model
     //Esemény adatai
     public static function getEvent($id)
     {
-        return self::find($id);
+        $event = self::with('tickets')->with('organizer:id,name')->find($id);
+        if (!$event) {
+            return null; 
+        }
+
+        $sold_tickets = $event->tickets->sum('quantity');
+        $available = $event->capacity - $sold_tickets;
+        $event->available_tickets = $available;
+
+        return $event;
     }
 
     //Összes esemény lekérdezése kezdő dátumok szerint

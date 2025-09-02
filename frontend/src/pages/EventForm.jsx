@@ -79,7 +79,8 @@ export default function EventForm() {
             if(response.data.success === true) {
                 navigate('/events');
             }else { 
-                showNotification(response.data.message)
+                showNotification(response.data.message);
+                setLoading(false);
             }
 
             } catch (error) {
@@ -93,6 +94,8 @@ export default function EventForm() {
                 return;
             } 
             logClientError(Error);
+        }finally {
+            setLoading(false);
         }
     }
 
@@ -121,6 +124,8 @@ export default function EventForm() {
                 return;
             } 
             logClientError(Error);
+        }finally {
+            setLoading(false);
         }
     }
 

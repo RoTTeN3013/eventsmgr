@@ -55,8 +55,9 @@ export default function Event() {
                 { icon: 'fa-file-lines', value: res.data.event.description },
                 { icon: 'fa-calendar', value: res.data.event.start_at },
                 { icon: 'fa-location-dot', value: res.data.event.location },
-                { icon: 'fa-ticket', value: 33 },
-                { icon: 'fa-money-bill', value: res.data.event.price }
+                { icon: 'fa-ticket', value: res.data.event.available_tickets + ' db elérhető'},
+                { icon: 'fa-money-bill', value: 'Jegyár: ' + res.data.event.price + 'Ft' },
+                { icon: 'fa-user', value: 'Szervező: ' + res.data.event.organizer.name}
             ],
             buttons: [
                 { icon: 'fa-arrow-left', title: 'Események', route: '/events'},

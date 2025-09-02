@@ -66,6 +66,7 @@ export default function Events() {
     const filterInputs = [
         {label: 'Esemény neve', type: 'text', handler: (e) => handleUpdateFilters('title', e.target.value)},
         {label: 'Szervező', type: 'text', handler: (e) => handleUpdateFilters('organizer', e.target.value)},
+        {label: 'Helyszín', type: 'text', handler: (e) => handleUpdateFilters('location', e.target.value)},
         {label: 'Dátum', type: 'date', handler: (e) => handleUpdateFilters('start_date', e.target.value)},
         {label: 'Minimum jegyár', type: 'number', handler: (e) => handleUpdateFilters('minimum_price', e.target.value)},
         {label: 'Maximum jegyár', type: 'number', handler: (e) => handleUpdateFilters('maximum_price', e.target.value)},
@@ -87,9 +88,10 @@ export default function Events() {
                         details: [
                             {value: event.short_description, icon: 'fa-file-lines'},
                             {value: event.start_at, icon: 'fa-calendar'},
-                            {value: event.available_tickets +  ' db', icon: 'fa-ticket'},
+                            {value: event.available_tickets +  ' db elérhető', icon: 'fa-ticket'},
                             {value: event.price  + ' Ft', icon: 'fa-money-bill'},
-                            {value: event.limit_per_person + ' db', icon: 'fa-user'},
+                            {value: event.limit_per_person + ' db / felhasználó', icon: 'fa-ticket'},
+                            {value: 'Szervező ' + event.organizer.name, icon: 'fa-user'},
                         ],
                         buttons: [
                             {title: 'Részletek', icon: 'fa-arrow-right', route: '/event/' + event.id},

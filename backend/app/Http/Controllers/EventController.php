@@ -85,6 +85,10 @@ class EventController extends Controller
                 });
             }
 
+            if($request->filled('location')) {
+                $builder->where('location', 'like', "%{$request->location}%");
+            }
+
             if($request->filled('start_date')) {
                 $builder->where('start_at', $request->start_date);
             }
@@ -148,7 +152,7 @@ class EventController extends Controller
             'capacity' => 'required|numeric',
             'limit_per_person' => 'required|numeric',
             'price' => 'required|numeric',
-            'start_at' => 'required',
+            'start_at' => 'required|after:today',
             ],
             [
             'title.required' => 'Esemény nevének (megnevezés) megadása kötelező!',
@@ -172,7 +176,8 @@ class EventController extends Controller
             'price.required' => 'Ár limit megadása kötelező!',
             'price.numeric' => 'Az ár csakis szám(ok)ból állhat!',
                
-            'start_at.required' => 'Kezdés dátum és idő megadása kötelező!',     
+            'start_at.required' => 'Kezdés dátum és idő megadása kötelező!',  
+            'start_at.after' => 'Hibás dátum (kezdés dátuma csakis a jövőben lehet)',     
             ]
         );
 
