@@ -17,35 +17,44 @@ const CardList = ({collection, pagination}) => {
   };
 
   return (
-    <div className="container-fluid d-flex align-items-center flex-column">
+    <div className="container-fluid d-flex align-items-center flex-column mb-5">
       <div className="card-list-container gap-5 d-flex flex-column flex-lg-row justify-content-start p-5">
-          {Object.values(collection).map((item, index) => (
-              <div key={index} className="list-card d-flex flex-column">
-                  <div className="list-card-header d-flex flex-column justify-content-center align-items-center">
-                    <i className={`fa-solid ${item.icon} fa-4x mb-3`}></i>
-                    <h5>{item.title}</h5>
-                  </div>
-                  <div className="p-3 d-flex flex-column justify-content-center gap-2">
-                    {Object.values(item.details).map((item_detail, detail_index) => (
-                        <div key={detail_index} className="d-flex align-items-center justify-content-between gap-1">
-                          <i className={`fa-solid ${item_detail.icon}`}></i>
-                          <p className="m-0 p-0">{item_detail.value}</p>
-                        </div>
-                    ))}
-                    <div className="d-flex flex-column mt-3 gap-2">
-                      {item.buttons && Object.values(item.buttons).map((button, button_index) => (
-                          <Link to={button.route} key={button_index} className="btn btn-dark"><i className={`fa-solid ${button.icon}`}></i> {button.title}</Link>
-                      ))}
-                      {item.cations }
-                      {item.actions && Object.values(item.actions).map((action, action_index) => (
-                          <button key={action_index} onClick={action.handler} className="btn btn-dark"><i className={`fa-solid ${action.icon}`}></i> {action.title}</button>
-                      ))}
-                    </div>
-                  </div>
+        {Object.values(collection).length > 0 ? (
+          Object.values(collection).map((item, index) => (
+            <div key={index} className="list-card d-flex flex-column animate__animated animate__fadeInRight" style={{ animationDelay: `${index * 100}ms` }}>
+              <div className="list-card-header d-flex flex-column justify-content-center align-items-center">
+                <i className={`fa-solid ${item.icon} fa-4x mb-3`}></i>
+                <h5>{item.title}</h5>
               </div>
-          ))}
+              <div className="p-3 d-flex flex-column justify-content-center gap-2">
+                {Object.values(item.details).map((item_detail, detail_index) => (
+                  <div key={detail_index} className="d-flex align-items-center justify-content-between gap-1">
+                    <i className={`fa-solid ${item_detail.icon}`}></i>
+                    <p className="m-0 p-0">{item_detail.value}</p>
+                  </div>
+                ))}
+                <div className="d-flex flex-column mt-3 gap-2">
+                  {item.buttons && Object.values(item.buttons).map((button, button_index) => (
+                    <Link to={button.route} key={button_index} className="btn btn-dark">
+                      <i className={`fa-solid ${button.icon}`}></i> {button.title}
+                    </Link>
+                  ))}
+                  {item.actions && Object.values(item.actions).map((action, action_index) => (
+                    <button key={action_index} onClick={action.handler} className="btn btn-dark">
+                      <i className={`fa-solid ${action.icon}`}></i> {action.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-left fs-3 p-0 m-0 animate__animated animate__fadeInDown">
+            A lista jelenleg üres!
+          </p>
+        )}
       </div>  
-      <div className="d-flex align-items-center gap-3">
+      <div className="d-flex align-items-center gap-3 animate__animated animate__fadeInUp">
             
             {pagination?.prev_page_url && (
               <button
@@ -59,9 +68,9 @@ const CardList = ({collection, pagination}) => {
               </button>
             )}
 
-            {pagination && (
+            {Object.values(collection).length > 0 && (
               <span>
-                Oldal {pagination.current_page} / {pagination.last_page}
+                Oldal {pagination?.current_page} / {pagination.last_page}
               </span>
             )}
 

@@ -12,8 +12,8 @@ export default function Login() {
 
     return (
         <div className="d-flex login-container">
-            <div className="login-poster d-flex justify-content-center align-items-center animate__animated animate__fadeInDown">
-                <i className="fa fa-calendar-days fa-10x"></i>
+            <div className="login-poster d-flex justify-content-center align-items-center animate__animated animate__fadeIn">
+                <i className="fa fa-calendar-days fa-10x animate__animated animate__fadeInRight"></i>
                 <h1 className="logo-text animate__animated animate__fadeInLeft">EventsBook</h1>
             </div>
             <LoginPanel />

@@ -26,37 +26,37 @@ function AppRouter() {
                 }
             />
             <Route path="/users" element={
-                <ProtectedRoute role={['admin']}>
+                <ProtectedRoute roles={['admin']}>
                     <Users />
                 </ProtectedRoute>
                 }
             />
             <Route path="/manage-events" element={
-                <ProtectedRoute role={['admin']}>
+                <ProtectedRoute roles={['admin']}>
                     <EventList listType='admin' />
                 </ProtectedRoute>
                 }
             />
             <Route path="/own-events" element={
-                <ProtectedRoute role={['admin', 'organizer']}>
+                <ProtectedRoute roles={['admin', 'organizer']}>
                     <EventList listType='organizer' />
                 </ProtectedRoute>
                 }
             />
             <Route path="/own-tickets" element={
-                <ProtectedRoute role={['admin', 'organizer']}>
+                <ProtectedRoute roles={['admin', 'organizer']}>
                     <OwnTickets />
                 </ProtectedRoute>
                 }
             />
             <Route path="/create-event" element={
-                <ProtectedRoute role={['admin', 'organizer']}>
+                <ProtectedRoute roles={['admin', 'organizer']}>
                     <EventForm />
                 </ProtectedRoute>
                 }
             />
             <Route path="/edit-event/:id" element={
-                <ProtectedRoute role={['admin', 'organizer']}>
+                <ProtectedRoute roles={['admin', 'organizer']}>
                     <EventForm />
                 </ProtectedRoute>
                 }

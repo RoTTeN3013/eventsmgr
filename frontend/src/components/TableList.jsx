@@ -18,7 +18,7 @@ const TableList = ({collection, pagination}) => {
   };
 
   return (
-    <div className="container-fluid table-container d-flex flex-column align-items-center gap-3">
+    <div className="container-fluid table-container d-flex flex-column align-items-center gap-3 animate__animated animate__fadeInUp">
       <table className="table table-striped table-bordered">
         <thead>
           <tr>

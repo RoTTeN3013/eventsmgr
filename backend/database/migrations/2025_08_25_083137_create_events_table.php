@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('location');
             $table->integer('capacity');
             $table->integer('price');
+            $table->boolean('email_requested');
             $table->integer('limit_per_person');
             $table->timestamp('start_at');
             $table->timestamps();

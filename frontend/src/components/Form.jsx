@@ -1,7 +1,7 @@
 
 const Form = ({inputs, header}) => {
   return (
-    <div className="form container-fluid d-flex justify-content-center align-items-center flex-column gap-3">
+    <div className="form container-fluid d-flex justify-content-center align-items-center flex-column gap-3 mb-5 animate__animated animate__fadeInDown">
         <div className="form-header d-flex gap-2 align-items-center justify-content-center">
             <i className={`fa-solid ${header.icon} fa-2x`}></i>
             <h5 className="m-0 p-0">{header.title}</h5>

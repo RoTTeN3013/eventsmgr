@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
+use App\Models\User;
 use App\Models\CartItems;
 use App\Models\Ticket;
+
+use App\Mail\PurchaseMail;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
@@ -21,10 +25,10 @@ class TicketController extends Controller
             $user_ticket = Ticket::getUserTicketForEvent($user, $event->id);
 
             //Esemlny státusz ellenőrzés (A biztonság kedvéért)
-            if($$event->status === 'cancelled') {
+            if($event->status === 'cancelled') {
                 return response()->json([
                     'success' => false,
-                    'message' => $event->title . ': Az esemény törölve lett!',
+                    'message' => $event->title . ': Az esemény időközben törölve lett!',
                 ]);
             }
 
@@ -52,12 +56,29 @@ class TicketController extends Controller
                     ]);
                 }
                 $user_ticket->update(['quantity' => $user_ticket->quantity + $item->quantity]);
+                if($event->email_requested) {
+                    $email = User::where('id', $event->organizer_id)->value('email'); 
+                    $mail_data['title'] = $event->title;
+                    $mail_data['quantity'] = $item->quantity;
+                    $mail_data['price'] = $item->quantity * $event->price;
+
+                    Mail::to($email)->send(new PurchaseMail($mail_data));
+                }
             }else {
                 Ticket::create([
                     'user_id' => $user,
                     'event_id' => $event->id,
                     'quantity' => $item->quantity
                 ]);
+
+                if($event->email_requested) {
+                    $email = User::where('id', $event->organizer_id)->value('email'); 
+                    $mail_data['title'] = $event->title;
+                    $mail_data['quantity'] = $item->quantity;
+                    $mail_data['price'] = $item->quantity * $event->price;
+
+                    Mail::to($email)->send(new PurchaseMail($mail_data));
+                }
             }
         }
         CartItems::clearUserCart($user);

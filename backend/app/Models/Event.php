@@ -16,7 +16,8 @@ class Event extends Model
         'location',
         'capacity',
         'price',
-        'limit_per_person'
+        'limit_per_person',
+        'email_requested'
     ];
 
     //Organizer -> Esemény összekötése
@@ -74,7 +75,8 @@ class Event extends Model
             'price' => $data['price'],
             'start_at' => $data['start_at'],
             'organizer_id' => $organizer,
-            'location' => $data['location']
+            'location' => $data['location'],
+            'email_requested' => $data['email_rquested'],
         ]);
     }
 
@@ -97,6 +99,7 @@ class Event extends Model
         $event->price = $data['price'] ?? $event->price;
         $event->start_at = $data['start_at'] ?? $event->start_at;
         $event->location = $data['location'] ?? $event->location;
+        $event->email_requested = $data['email_requested'] ?? $event->email_requested;
 
         return $event->save();
     }

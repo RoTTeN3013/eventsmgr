@@ -12,7 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        // You can add paths here you want to exclude from CSRF, e.g.:
-        // 'api/log-user-in',
+        '/log-client-error',
     ];
-}
+    }

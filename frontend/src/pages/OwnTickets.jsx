@@ -7,12 +7,14 @@ import axios from 'axios'
 
 export default function OwnTickets() {
 
+    const baseURL = import.meta.env.VITE_API_URL;
+
     const [tickets, setTickets] = useState({});
     const [loading, setLoading] = useState(true);
     const collection = {};
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/get-user-tickets', { withCredentials: true })
+        axios.get(baseURL + '/get-user-tickets', { withCredentials: true })
             .then(res => {
                 res.data.tickets.forEach(ticket => {
                     collection[ticket.id] = {

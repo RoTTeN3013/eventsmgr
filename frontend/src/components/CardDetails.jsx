@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 
 const CardDetails = ({item}) => {
   return (
-    <div className="container-fluid d-flex flex-column align-items-center gap-4 card-details-container">
+    <div className="container-fluid d-flex flex-column align-items-center gap-4 card-details-container animate__animated animate__fadeInRight">
         <div className="card-details-card header p-3 d-flex align-items-center gap-2">
             <i className={`fa ${item.title.icon} fa-2x`}></i>
             <h3 className="m-0 p-0">{item.title.value}</h3>
@@ -15,9 +15,14 @@ const CardDetails = ({item}) => {
                 <p className="m-0 p-0">{detail.value}</p>
             </div>
         ))}
-        {Object.values(item.buttons).map((button, button_index) => (
-            <Link to={button.route} key={button_index} className="btn btn-dark"><i className={`fa ${button.icon}`}></i> {button.title} </Link>
-        ))}
+        <div className="d-flex gap-2">
+            {Object.values(item.buttons).map((button, button_index) => (
+                <Link to={button.route} key={button_index} className="btn btn-dark"><i className={`fa ${button.icon}`}></i> {button.title} </Link>
+            ))}
+            {Object.values(item.actions).map((action, action_index) => (
+                <button onClick={action.handler} key={action_index} className="btn btn-dark"><i className={`fa ${action.icon}`}></i> {action.title} </button>
+            ))}
+        </div>
     </div>
   )
 }

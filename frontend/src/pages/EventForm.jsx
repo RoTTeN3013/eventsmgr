@@ -7,8 +7,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNotification } from '../context/NotificationContext';
+import logClientError from '../utils/logError';
 
 export default function EventForm() {
+
+    const baseURL = import.meta.env.VITE_API_URL;
 
     const { showNotification } = useNotification();
     const { id = 0 } = useParams();
@@ -26,13 +29,14 @@ export default function EventForm() {
             limit_per_person: 5,
             location: '',
             price: 1,
+            email_requested: false,
             status: 'published'
         });
         if (id) { 
             const getEventDetails = async () => {
                 try {
                     const response = await axios.get(
-                        'http://localhost:8000/api/get-event-form-details', {
+                        baseURL + 'get-event-form-details', {
                             params: {id},           
                             withCredentials: true,
                             withXSRFToken: true
@@ -47,11 +51,7 @@ export default function EventForm() {
                         showNotification(response.data.message);
                     }
                 } catch (error) {
-                    if (error.request) {
-                        console.log("Response hiba:", error.request);
-                    } else {
-                        console.log("Axios error:", error.message);
-                    }
+                    logClientError(error);
                 }finally {
                     setLoading(false);
                 }
@@ -69,8 +69,9 @@ export default function EventForm() {
     }
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
-            const response = await axios.post('http://localhost:8000/api/create-event', 
+            const response = await axios.post(baseURL + '/create-event', 
                 inputs
             ,{ withCredentials: true, withXSRFToken: true });
 
@@ -86,18 +87,19 @@ export default function EventForm() {
                 //Validációs error
                 if(error.response.status == 422) {
                     showNotification(error.response.data.errors)
+                }else {
+                    logClientError(Error);
                 }
-            } else if (error.request) { //Response error
-                console.log("No response received:", error.request);
-            } else { //Request error
-                console.log("Axios error:", error.message);
-            }
+                return;
+            } 
+            logClientError(Error);
         }
     }
 
      const handleEditSubmit = async (eventID) => {
+        setLoading(true);
         try {
-            const response = await axios.post('http://localhost:8000/api/update-event/' + eventID, 
+            const response = await axios.post(baseURL + '/update-event/' + eventID, 
                 inputs
             ,{ withCredentials: true, withXSRFToken: true });
 
@@ -113,12 +115,12 @@ export default function EventForm() {
                 //Validációs error
                 if(error.response.status == 422) {
                     showNotification(error.response.data.errors)
+                }else {
+                    logClientError(Error);
                 }
-            } else if (error.request) { //Response error
-                console.log("No response received:", error.request);
-            } else { //Request error
-                console.log("Axios error:", error.message);
-            }
+                return;
+            } 
+            logClientError(Error);
         }
     }
 
@@ -133,6 +135,12 @@ export default function EventForm() {
         {label: 'Személyenkénti limit (jegyek száma)', type: 'number', value: inputs.limit_per_person, handler: (e) => handleUpdateInputs('limit_per_person', e.target.value)},
         {label: 'Helyszín', type: 'text', value: inputs.location, handler: (e) => handleUpdateInputs('location', e.target.value)},
         {label: 'Jegyár (Forint)', type: 'number', value: inputs.price, handler: (e) => handleUpdateInputs('price', e.target.value)},
+        {label: 'Email küldése vásárlás esetén', type: 'select', value: inputs.email_requested, handler: (e) => handleUpdateInputs('email_requested', e.target.value),
+            options: [
+                {value: false, label: 'Nem'},
+                {value: true, label: 'Igen'},
+            ]
+        },
         {label: 'Státusz', type: 'select', value: inputs.status, handler: (e) => handleUpdateInputs('status', e.target.value),
             options: [
                 {value: 'published', label: 'Publikus'},

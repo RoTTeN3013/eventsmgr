@@ -9,10 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
-    public function getAllEvents(Request $request) {
+    public function getAllEvents($type, Request $request) {
         try{
             
-            $builder = Event::with('organizer:id,name');
+            $builder = Event::with([
+                'organizer:id,name', 
+                'tickets:id,quantity' 
+            ]);
+
+            if($type === 'organizer') {
+                $builder->where('organizer_id', Auth::id());
+            }
 
             if($request->filled('title')) {
                 $builder->where('title', 'like', "%{$request->title}%");
@@ -38,6 +45,15 @@ class EventController extends Controller
 
             $events = $builder->orderBy('created_at', 'ASC')->paginate(15);
 
+            //Elérhető jegyek számítása
+            foreach($events as &$event) {
+                $tickets = $event->tickets();
+                if($tickets) {
+                    $sold = $tickets->sum('quantity');
+                    $event->available_tickets = $event->capacity - $sold;
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'events' => $events,
@@ -47,14 +63,51 @@ class EventController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Hiba az események lekérdezése közben',
-                //Log the error $e->getMessage();
             ]);
         }
     }
 
-    public function getPublishedEvents() {
+    public function getPublishedEvents(Request $request) {
         try {
-            $events = Event::getPublishedEvents();
+
+            $builder = Event::with([
+                'organizer:id,name', 
+                'tickets:id,quantity' 
+            ]);
+
+            if($request->filled('title')) {
+                $builder->where('title', 'like', "%{$request->title}%");
+            }
+            
+            if($request->filled('organizer')) {
+                $builder->whereHas('organizer', function($q) use ($request) {
+                    $q->where('name', 'like', "%{$request->organizer}%");
+                });
+            }
+
+            if($request->filled('start_date')) {
+                $builder->where('start_at', $request->start_date);
+            }
+
+            if($request->filled('minimum_price')) {
+                $builder->where('price', '>=', $request->minimum_price);
+            }
+
+            if($request->filled('maximum_price')) {
+                $builder->where('price', '<=', $request->maximum_price);
+            }
+
+            $events = $builder->where('status', 'published')->orderBy('created_at', 'ASC')->paginate(15);
+
+            //Elérhető jegyek számítása
+            foreach($events as &$event) {
+                $tickets = $event->tickets();
+                if($tickets) {
+                    $sold = $tickets->sum('quantity');
+                    $event->available_tickets = $event->capacity - $sold;
+                }
+            }
+            
             return response()->json([
                 'success' => true,
                 'events' => $events,

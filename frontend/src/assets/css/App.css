@@ -19,6 +19,7 @@ body, html, #root {
     border-bottom: 1px solid white;
     position: fixed;
     top: 0;
+    z-index: 999;
 }
 
 .nav-link {
@@ -127,7 +128,7 @@ body, html, #root {
 .card-details-card {
     min-height: 50px;
     height: fit-content;
-    width: 50%;
+    width: 70%;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
 

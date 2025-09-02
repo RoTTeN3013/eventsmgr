@@ -7,8 +7,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios'
 import { useNotification } from '../context/NotificationContext';
 import {useSearchParams} from 'react-router-dom' 
+import logClientError from '../utils/logError';
 
 export default function Users() {
+
+    const baseURL = import.meta.env.VITE_API_URL;
 
     //Pagination oldal id kinyerése az url-ből
     const [searchParams] = useSearchParams();
@@ -48,9 +51,11 @@ export default function Users() {
         ]},
     ]
 
+    const filterButton = {label: 'Keresés', handler: () => setUpdate(true)};
+
     const handleBlockUser = (userID) => {
         setLoading(true);
-        axios.post('http://localhost:8000/api/set-user-blocked-status', {user_id: userID}, { withCredentials: true, withXSRFToken: true })
+        axios.post(baseURL + '/set-user-blocked-status', {user_id: userID}, { withCredentials: true, withXSRFToken: true })
             .then(res => {
                 if(res.data.success) {
                     setUpdate(true);
@@ -58,12 +63,13 @@ export default function Users() {
                     showNotification(`A felhasználó sikeresen ${status}!`)
                 }
             })
-            .catch((err) => console.error(err))
+            .catch((err) => logClientError(err))
             .finally(() => setLoading(false));
     }
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/get-all-users?page=${page}`, { withCredentials: true,  params: filters })
+        setLoading(true);
+        axios.get(`${baseURL}/get-all-users?page=${page}`, { withCredentials: true,  params: filters })
             .then(res => {
                 //Így a dinamikusan megadott értékekkel újrhasznosítható teljesen a komponens
                 const collection = {
@@ -100,21 +106,22 @@ export default function Users() {
                     last_page: res.data.users.last_page,
                 })
             })
-            .catch(() => setUsers([]))
+            .catch((error) => {
+                setUsers([]);
+                logClientError(error);
+            })
             .finally(() =>  {
                 setLoading(false); 
                 setUpdate(false);
             }
         );
-    }, [update, filters, page]);
+    }, [update, page]);
 
     return (
         <BaseLayout>
+            <Filter filters={filterInputs} filterButton={filterButton}/> 
             {loading ? <Loader /> : 
-                <>
-                    <Filter filters={filterInputs}/> 
-                    <TableList collection={users} pagination={pagination}/>
-                </>
+                <TableList collection={users} pagination={pagination}/>
             }
         </BaseLayout>
     );

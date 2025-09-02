@@ -2,8 +2,11 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import {Link, useNavigate} from 'react-router-dom'
 import { useNotification } from '../context/NotificationContext';
+import logClientError from '../utils/logError';
 
 const CartItems = ({ cartItems, total }) => {
+
+    const baseURL = import.meta.env.VITE_API_URL;
 
     const [cartItemList, setCartItems] = useState(cartItems);
     const [totalPrice, setTotalPrice] = useState(total);
@@ -35,20 +38,21 @@ const CartItems = ({ cartItems, total }) => {
         if (updateTimer.current) clearTimeout(updateTimer.current);
 
         updateTimer.current = setTimeout(() => {
-            axios.post('http://localhost:8000/api/update-user-cart', {
+            axios.post(baseURL + '/update-user-cart', {
                 id,
                 quantity
             }, 
             {withCredentials: true, withXSRFToken: true }
-        ).catch(() => {
-                console.log('');
+        ).catch((error) => {
+                logClientError(error);
             });
         }, 500); 
     }
 
     const handleBuyTickets = async () => {
+        setLoading(true);
         try {
-            const response = await axios.post('http://localhost:8000/api/buy-tickets',
+            const response = await axios.post(baseURL + '/buy-tickets',
                 {},
             {withCredentials: true, withXSRFToken: true }
         );
@@ -60,7 +64,7 @@ const CartItems = ({ cartItems, total }) => {
         }
 
         } catch (error) {
-            console.error('Error:', error);
+            logClientError(error);
         }
     }
 
@@ -70,29 +74,29 @@ const CartItems = ({ cartItems, total }) => {
         <div className="d-flex flex-lg-row flex-column container-fluid justify-content-center align-items-center align-items-lg-start content cart-item-container">
             <div className="p-0 mb-4 mb-lg-0 gap-4 d-flex flex-column align-items-lg-between align-items-center col-lg-8 col-12">
             {cartItemList.length > 0 ? (
-                cartItemList.map((item) => (
-                <div key={item.id} className="d-flex justify-content-between align-items-center cart-item-box w-100">
+                cartItemList.map((item, item_index) => (
+                <div key={item_index} className="d-flex justify-content-between align-items-center cart-item-box w-100 animate__animated animate__fadeInDown" style={{ animationDelay: `${item_index * 100}ms` }}>
 
                     <p className="fs-6 p-0 m-0">{item.event.title} - {item.event.price} Ft / Jegy</p>  
                     <div className="d-flex gap-3 align-items-center">
-                        <button className="btn btn-dark" 
+                        <button className="btn btn-dark" disabled={item.quantity === 0 ? true : false} 
                             onClick={() => {
-                            if((item.quantity) > 0) {
-                                setQuantity(item.id, item.quantity - 1);
-                            }
+                                if((item.quantity) > 0) {
+                                    setQuantity(item.id, item.quantity - 1);
+                                }
                             }}
                         >
                         <i className="fa fa-minus"></i>
                         </button>
                         <p className="text-dark p-0 m-0">{item.quantity}</p>
-                        <button className="btn btn-dark" 
+                        <button className="btn btn-dark" disabled={item.quantity === 0 ? true : false} 
                             onClick={() => {
                             setQuantity(item.id, item.quantity + 1);
                             }}
                         >
                         <i className="fa fa-plus"></i>
                         </button>
-                        <button className="btn btn-dark" disabled={loading}
+                        <button className="btn btn-dark" disabled={loading || item.quantity === 0 ? true : false}
                             onClick={() => {
                             setQuantity(item.id, 0);
                             }}
@@ -103,19 +107,19 @@ const CartItems = ({ cartItems, total }) => {
                 </div>
                 ))
             ) : (
-                <p className="text-left fs-3 p-0 m-0">A kosarad jelenleg üres!</p>
+                <p className="text-left fs-3 p-0 m-0 animate__animated animate__fadeInDown">A kosarad jelenleg üres!</p>
             )}
             </div>
-            <div className="d-flex flex-column col-lg-4 col-12 gap-4 align-items-center align-items-lg-end">
-            <div className="cart_total_container d-flex justify-content-start align-items-center p-3 text-white">
-                <p className="total-price fs-5 p-0 m-0">Kosár végösszege: {totalPrice}Ft</p> 
-            </div>
-            <div className="d-flex gap-2 justify-content-end">
-                <Link to="/events" className="btn btn-dark"><i className="fa fa-shopping-cart"></i> Vásárlás folytatása</Link>
-                {cartItemList.length > 0 && (
-                <button className="btn btn-dark" onClick={handleShow}><i className="fa fa-credit-card"></i> Megrendelés</button>
-                )}
-            </div>
+            <div className="d-flex flex-column col-lg-4 col-12 gap-4 align-items-center align-items-lg-end animate__animated animate__fadeInRight">
+                <div className="cart_total_container d-flex justify-content-start align-items-center p-3 text-white">
+                    <p className="total-price fs-5 p-0 m-0">Kosár végösszege: {totalPrice}Ft</p> 
+                </div>
+                <div className="d-flex gap-2 justify-content-end">
+                    <Link to="/events" className="btn btn-dark"><i className="fa fa-shopping-cart"></i> Vásárlás folytatása</Link>
+                    {cartItemList.length > 0 && (
+                    <button className="btn btn-dark" onClick={handleShow}><i className="fa fa-credit-card"></i> Megrendelés</button>
+                    )}
+                </div>
             </div>
         </div>
         </div>
@@ -131,7 +135,7 @@ const CartItems = ({ cartItems, total }) => {
                         <p className="p-0 m-0">Vásárlás végösszege: {total} Ft</p>
                     </div>
                     <div className="modal-footer">
-                        <button className="btn btn-dark" onClick={handleBuyTickets}>Megrendelés</button>
+                        <button className="btn btn-dark" disabled={loading} onClick={handleBuyTickets}>Megrendelés</button>
                     </div>
                 </div>
             </div>

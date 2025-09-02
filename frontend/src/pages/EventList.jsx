@@ -6,13 +6,18 @@ import BaseLayout from '../layouts/BaseLayout';
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 import { useNotification } from '../context/NotificationContext';
-import {useSearchParams} from 'react-router-dom' 
+import {useSearchParams, useLocation } from 'react-router-dom' 
+import logClientError from '../utils/logError';
 
 export default function EventList({listType}) {
+
+    const baseURL = import.meta.env.VITE_API_URL;
 
     //Pagination oldal id kinyerése az url-ből
     const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || 1;
+
+    const location = useLocation();
 
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -23,6 +28,7 @@ export default function EventList({listType}) {
 
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [update, setUpdate] = useState(false);
     const [filters, setFilters] = useState([]);
     const { showNotification } = useNotification();
 
@@ -49,6 +55,8 @@ export default function EventList({listType}) {
         {label: 'Dátum (létrehozás', type: 'date', handler: (e) => handleUpdateFilters('date_of_create', e.target.value)},
     ]
 
+    const filterButton = {label: 'Keresés', handler: () => setUpdate(true)};
+    
     const handleUpdateFilters = (filterName, value) => {
         setFilters(prev => ({
             ...prev,
@@ -57,7 +65,8 @@ export default function EventList({listType}) {
     }
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/get-all-events?page=${page}`, { withCredentials: true, params: filters })
+        setLoading(true);
+        axios.get(`${baseURL}/get-all-events/${listType}?page=${page}`, { withCredentials: true, params: filters })
             .then(res => {
                 if(res.data.success) {
                     const collection = {
@@ -68,6 +77,7 @@ export default function EventList({listType}) {
                                 [{ title: 'Szervező' }]
                         : []),
                         { title: 'Dátum' },
+                        { title: 'Elérhető jegyek' },
                         { title: 'Létrehozva' },
                         { title: 'Utoljára szerkesztve' },
                         { title: 'Műveletek' },
@@ -84,6 +94,7 @@ export default function EventList({listType}) {
                                         [{ value: event.organizer.name },]
                                 : []), 
                                 { value: event.start_at},
+                                { value: event.available_tickets},
                                 { value: event.created_at },
                                 { value: event.updated_at },
                             ],
@@ -103,20 +114,22 @@ export default function EventList({listType}) {
                     showNotification(res.data.message);
                 }
             })
-            .catch(() => setEvents([]))
+            .catch((error) => {
+                setEvents([]);
+                logClientError(error);
+            })
             .finally(() =>  {
                 setLoading(false); 
+                setUpdate(false);
             }
         );
-    }, [filters, page]);
+    }, [update, page, location.pathname ]);
 
     return (
         <BaseLayout>
-            {loading ? <Loader /> : 
-                <>
-                    <Filter filters={filterInputs}/> 
-                    <TableList collection={events} pagination={pagination}/>
-                </>
+            <Filter filters={filterInputs} filterButton={filterButton}/> 
+            {loading ? <Loader /> :               
+                <TableList collection={events} pagination={pagination}/>
             }
         </BaseLayout>
     );

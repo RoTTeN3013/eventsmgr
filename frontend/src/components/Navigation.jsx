@@ -2,8 +2,11 @@ import React from 'react'
 import { Link, Navigate } from "react-router-dom";
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
+import logClientError from '../utils/logError';
 
 const Nanvigation = () => {
+
+  const baseURL = import.meta.env.VITE_API_URL;
 
   //Felhasználó adatok
   const { user } = useUser();
@@ -61,7 +64,7 @@ const Nanvigation = () => {
   const handleLogOut = async () => {
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/log-user-out',
+        baseURL + '/log-user-out',
         {},
         { withCredentials: true, withXSRFToken: true }
       );
@@ -71,12 +74,12 @@ const Nanvigation = () => {
         <Navigate to="/" replace />
       } 
     } catch (error) {
-      console.error(error);
+      logClientError(error);
     }
   };
 
   return (
-    <div className="navbar px-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+    <div className="navbar px-4 d-flex justify-content-between align-items-center">
         <div className="d-flex">
           {menus.map((menu, index) => (
             (menu.permission.length === 0 || menu.permission.includes(user.role)) && (

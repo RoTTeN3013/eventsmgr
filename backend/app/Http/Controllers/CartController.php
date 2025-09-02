@@ -109,7 +109,6 @@ class CartController extends Controller
 
             if($item) {
                 if($request->quantity + $item->quantity > $event->limit_per_person) {
-                    $available = $event->capacity - $sold_tickets;
                     return response()->json([
                         'success' => false,
                         'message' => 'Személyenkénti limit jegyek birtoklására erre az eseményre: ' . $event->limit_per_person,

@@ -6,8 +6,12 @@ import axios from 'axios'
 import Loader from '../components/Loader';
 import { useNotification } from '../context/NotificationContext';
 import {useSearchParams} from 'react-router-dom' 
+import Filter from '../components/Filter';
+import logClientError from '../utils/logError';
 
 export default function Events() {
+
+    const baseURL = import.meta.env.VITE_API_URL;
 
     //Pagination oldal id kinyerése az url-ből
     const [searchParams] = useSearchParams();
@@ -25,6 +29,8 @@ export default function Events() {
     const [disabled, setDisabled] = useState(false);
     const collection = {};
     const { showNotification } = useNotification();
+    const [filters, setFilters] = useState([]);
+    const [update, setUpdate] = useState(false);
 
     //Modal - Jegyvásárlás (kosárba helyezés)
     const [showModal, setShowModal] = useState(false);
@@ -50,9 +56,27 @@ export default function Events() {
         });
     }
 
+    const handleUpdateFilters = (filterName, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterName]: value
+        }));
+    }
+
+    const filterInputs = [
+        {label: 'Esemény neve', type: 'text', handler: (e) => handleUpdateFilters('title', e.target.value)},
+        {label: 'Szervező', type: 'text', handler: (e) => handleUpdateFilters('organizer', e.target.value)},
+        {label: 'Dátum', type: 'date', handler: (e) => handleUpdateFilters('start_date', e.target.value)},
+        {label: 'Minimum jegyár', type: 'number', handler: (e) => handleUpdateFilters('minimum_price', e.target.value)},
+        {label: 'Maximum jegyár', type: 'number', handler: (e) => handleUpdateFilters('maximum_price', e.target.value)},
+    ]
+
+    const filterButton = {label: 'Keresés', handler: () => setUpdate(true)};
+
+
     useEffect(() => {
         setLoading(true);
-        axios.get(`http://localhost:8000/api/get-event-list?page=${page}`, { withCredentials: true })
+        axios.get(`${baseURL}/get-event-list?page=${page}`, { withCredentials: true, params: filters})
             .then(res => {
                 //Így a dinamikusan megadott értékekkel újrhasznosítható teljesen a komponens
                 res.data.events.data.forEach(event => {
@@ -63,7 +87,7 @@ export default function Events() {
                         details: [
                             {value: event.short_description, icon: 'fa-file-lines'},
                             {value: event.start_at, icon: 'fa-calendar'},
-                            {value: 22 + ' db', icon: 'fa-ticket'},
+                            {value: event.available_tickets +  ' db', icon: 'fa-ticket'},
                             {value: event.price  + ' Ft', icon: 'fa-money-bill'},
                             {value: event.limit_per_person + ' db', icon: 'fa-user'},
                         ],
@@ -83,14 +107,17 @@ export default function Events() {
                     last_page: res.data.events.last_page,
                 })
             })
-            .catch(() => setEvents([]))
-            .finally(() => setLoading(false));
-    }, [page]);
+            .catch((error) => {
+                setEvents([]);
+                logClientError(error);
+            })
+            .finally(() => setLoading(false), setUpdate(false));
+    }, [page, update]);
 
     const handleAddItemToCart = async () => {
         setDisabled(true);
         try {
-            const response = await axios.post('http://localhost:8000/api/add-cart-item', 
+            const response = await axios.post(baseURL + '/add-cart-item', 
             {id: modalData.id, quantity: modalData.quantity},
             { withCredentials: true, withXSRFToken: true });
 
@@ -107,12 +134,10 @@ export default function Events() {
                 //Validációs error
                 if(error.response.status == 422) {
                     showNotification(error.response.data.errors)
+                }else {
+                    logClientError(error);
                 }
-            } else if (error.request) { //Response error
-                console.log("No response received:", error.request);
-            } else { //Request error
-                    console.log("Axios error:", error.message);
-            }
+            } 
         }finally {
             setDisabled(false);
         }
@@ -121,6 +146,7 @@ export default function Events() {
     return (
         <BaseLayout>
             
+                <Filter filters={filterInputs} filterButton={filterButton}/> 
                 {loading ? <Loader /> : <CardList collection={events} pagination={pagination} />}
  
                 <div className={`modal fade ${showModal ? 'show d-block' : ''}`} tabIndex="-1" onClick={handleClose}>

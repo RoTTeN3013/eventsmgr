@@ -3,8 +3,11 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext.jsx';
 import { useNotification } from '../context/NotificationContext';
+import logClientError from '../utils/logError';
 
 const LoginPanel = () => {
+
+  const baseURL = import.meta.env.VITE_API_URL;
 
   //State változók
   const [email, setEmail] = useState('');
@@ -20,7 +23,7 @@ const LoginPanel = () => {
   //Bejelentkezés
   const handleLoginAttempt = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/log-user-in', {
+      const response = await axios.post(baseURL + '/log-user-in', {
         email, 
         password,
     },{ withCredentials: true, withXSRFToken: true });
@@ -38,18 +41,18 @@ const LoginPanel = () => {
         //Validációs error
         if(error.response.status == 422) {
           showNotification(error.response.data.message)
+        }else {
+          logClientError(error);
         }
-      } else if (error.request) { //Response error
-        console.log("No response received:", error.request);
-      } else { //Request error
-        console.log("Axios error:", error.message);
+        return;
       }
+      logClientError(error);
     }
   };
 
   return (
     <>
-      <div className="login-panel d-flex flex-column align-items-start justify-content-center p-5">
+      <div className="login-panel d-flex flex-column align-items-start justify-content-center p-5 animate__animated animate__fadeInRight">
         <h5 className="text-uppercase">Üdv újra itt!</h5>
         <p className="mb-5">Kérlek add meg az adait a bejelentkezéshez.</p>
         <div className="form-group w-100 d-flex flex-column align-items-center gap-2 mb-3">
