@@ -54,7 +54,7 @@ const Nanvigation = () => {
       'route' : '/cart',
       'icon' : 'fa-shopping-cart',
       'name' : 'Kosár',
-      'permission' : ['admin', 'organizer']
+      'permission' : []
     }
   ];
 
