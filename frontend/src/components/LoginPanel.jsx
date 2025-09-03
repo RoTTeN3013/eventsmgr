@@ -12,6 +12,7 @@ const LoginPanel = () => {
   //State változók
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const { user, setUser } = useUser();
 
   //Navigáció
@@ -22,6 +23,7 @@ const LoginPanel = () => {
 
   //Bejelentkezés
   const handleLoginAttempt = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(baseURL + '/log-user-in', {
         email, 
@@ -47,6 +49,8 @@ const LoginPanel = () => {
         return;
       }
       logClientError(error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +69,7 @@ const LoginPanel = () => {
             onChange={(e) => {setPassword(e.target.value)}}
           />
         </div>
-          <button className="btn btn-dark" onClick={handleLoginAttempt}>Bejelentkezés</button>
+          <button className="btn btn-dark" onClick={handleLoginAttempt} disabled={loading}>Bejelentkezés</button>
       </div>
     </>
   )
