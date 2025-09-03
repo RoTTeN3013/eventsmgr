@@ -17,10 +17,7 @@ export default function EventForm() {
     const { id = 0 } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(id > 0 ? true : false);
-    const [inputs, setInputs] = useState({});
-
-    useEffect(() => {
-        setInputs({
+    const [inputs, setInputs] = useState({
             title: '',
             start_at: null,
             short_description: '',
@@ -32,34 +29,36 @@ export default function EventForm() {
             email_requested: false,
             status: 'published'
         });
+
+    useEffect(() => {
         if (id) { 
-            const getEventDetails = async () => {
-                try {
-                    const response = await axios.get(
-                        baseURL + '/get-event-form-details', {
-                            params: {id},           
-                            withCredentials: true,
-                            withXSRFToken: true
-                        }
-                    );
-
-                    if (response.data.success) {
-                        setInputs(
-                            response.data.event
-                        );
-                    } else {
-                        showNotification(response.data.message);
-                    }
-                } catch (error) {
-                    logClientError(error);
-                }finally {
-                    setLoading(false);
-                }
-            };
-
             getEventDetails();
         }
     }, [id]);
+
+    const getEventDetails = async () => {
+        try {
+            const response = await axios.get(
+                baseURL + '/get-event-form-details', {
+                    params: {id},           
+                    withCredentials: true,
+                    withXSRFToken: true
+                }
+            );
+
+            if (response.data.success) {
+                setInputs(
+                    response.data.event
+                );
+            } else {
+                showNotification(response.data.message);
+            }
+        } catch (error) {
+            logClientError(error);
+        }finally {
+            setLoading(false);
+        }
+    };
 
     const handleUpdateInputs = (fieldName, value) => {
         setInputs(prev => ({
