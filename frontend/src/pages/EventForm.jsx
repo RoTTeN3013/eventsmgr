@@ -36,7 +36,7 @@ export default function EventForm() {
             const getEventDetails = async () => {
                 try {
                     const response = await axios.get(
-                        baseURL + 'get-event-form-details', {
+                        baseURL + '/get-event-form-details', {
                             params: {id},           
                             withCredentials: true,
                             withXSRFToken: true
