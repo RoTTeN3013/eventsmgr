@@ -120,7 +120,6 @@ class EventController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Hiba az események lekérdezése közben',
-                //Log the error $e->getMessage();
             ]);
         }
     }
@@ -136,7 +135,6 @@ class EventController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Hiba az esemény lekérdezése közben',
-                //Log the error $e->getMessage();
             ]);
         }
     }
@@ -190,8 +188,7 @@ class EventController extends Controller
         }catch(\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-                //Log the error $e->getMessage();
+                'message' => 'Hiba az esemény létrehozása közben.',
             ]);
         }
     }
@@ -244,8 +241,7 @@ class EventController extends Controller
         }catch(\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-                //Log the error $e->getMessage();
+                'message' => 'Hiba az esemény módosítása közben.',
             ]);
         }
     }
@@ -260,8 +256,7 @@ class EventController extends Controller
         }catch(\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-                //Log the error $e->getMessage();
+                'message' => 'Hiba az esemény adatinak lekérdezése közben',
             ]);
         }
     }
