@@ -236,7 +236,7 @@ class EventController extends Controller
             Event::updateEvent($request, Auth::user()->id, $event_id);
             return response()->json([
                 'success' => true,
-                'message' => 'Esemény sikeresen létrehozva',
+                'message' => 'Esemény sikeresen módosítva',
             ]);
         }catch(\Exception $e) {
             return response()->json([
