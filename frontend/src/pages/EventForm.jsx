@@ -88,11 +88,11 @@ export default function EventForm() {
                 if(error.response.status == 422) {
                     showNotification(error.response.data.errors)
                 }else {
-                    logClientError(Error);
+                    logClientError(error);
                 }
                 return;
             } 
-            logClientError(Error);
+            logClientError(error);
         }finally {
             setLoading(false);
         }
@@ -118,11 +118,11 @@ export default function EventForm() {
                 if(error.response.status == 422) {
                     showNotification(error.response.data.errors)
                 }else {
-                    logClientError(Error);
+                    logClientError(error);
                 }
                 return;
             } 
-            logClientError(Error);
+            logClientError(error);
         }finally {
             setLoading(false);
         }
