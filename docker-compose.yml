@@ -8,6 +8,7 @@ services:
       - "8000:8000"
     volumes:
     - ./backend:/var/www
+    - /var/www/vendor
     working_dir: /var/www
     depends_on:
       - db
